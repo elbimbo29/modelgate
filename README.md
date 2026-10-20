@@ -75,8 +75,12 @@ Active development. Phase-by-phase build with "done when" checklists.
 
 ## Architecture
 
-*Coming in Phase 0, Step 0.6 — a real image, not Mermaid.*
+![ModelGate architecture](docs/architecture.png)
 
+Three pipelines, one finding:
+1. **Multi-LLM A/B routing** — deterministic traffic splitting, outcomes persisted.
+2. **Statistical decision + HITL escalation** — significant results ship, ambiguous ones go to humans.
+3. **Judge calibration loop** — human labels calibrate an LLM judge; agreement is measured against label count.
 ---
 
 ## Quickstart
