@@ -1,0 +1,170 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="ModelGate Architecture" id="modelgate-arch">
+    <mxGraphModel dx="1422" dy="800" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ============================ BAND LABELS ============================ -->
+        <mxCell id="band1-label" value="MULTI-LLM A/B ROUTING" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#999999;spacingLeft=0;letterSpacing=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="band2-label" value="STATISTICAL DECISION + HITL" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#999999;spacingLeft=0;letterSpacing=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="480" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="band3-label" value="JUDGE CALIBRATION LOOP" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;fontColor=#999999;spacingLeft=0;letterSpacing=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="830" width="300" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ============================ BAND 1 BOXES ============================ -->
+        <mxCell id="incoming" value="Incoming requests&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;user_id · session_id&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="170" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="hash" value="Deterministic hash&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;hash(experiment_id + unit_id)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="620" y="170" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="variantA" value="Variant A&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;gpt-4o-mini&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="120" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="variantB" value="Variant B&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;gpt-4o&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="880" y="240" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="outcomes" value="Outcomes&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;response · latency · cost&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=1.5;fontColor=#0D47A1;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="170" width="180" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="sqlite-caption" value="SQLite" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#999999;italic=1;" vertex="1" parent="1">
+          <mxGeometry x="1180" y="280" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ============================ BAND 1 ARROWS ============================ -->
+        <mxCell id="arrow-in-hash" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="incoming" target="hash">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-hash-a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="hash" target="variantA">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-hash-b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="hash" target="variantB">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-a-out" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="variantA" target="outcomes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-b-out" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#1976D2;strokeWidth=2;" edge="1" parent="1" source="variantB" target="outcomes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================ BAND 2 BOXES ============================ -->
+        <mxCell id="decision" value="Decision engine&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;z-test · Wilson CI&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;strokeWidth=1.5;fontColor=#E65100;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="540" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="significant" value="significant?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;strokeWidth=1.5;fontColor=#E65100;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="535" width="160" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="promote" value="PROMOTE" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#F57C00;" vertex="1" parent="1">
+          <mxGeometry x="840" y="500" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="reject" value="REJECT" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#F57C00;" vertex="1" parent="1">
+          <mxGeometry x="840" y="530" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="continue" value="CONTINUE" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#F57C00;" vertex="1" parent="1">
+          <mxGeometry x="840" y="560" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hitl" value="HITL review queue&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;pending → labeled&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;strokeWidth=1.5;fontColor=#E65100;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="540" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="labels" value="Human labels&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;A · B · Tie · Unsure&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF8E1;strokeColor=#F57C00;strokeWidth=1.5;fontColor=#E65100;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="540" width="180" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="streamlit-caption" value="Streamlit" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#999999;italic=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="640" width="140" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ============================ BAND 2 ARROWS ============================ -->
+        <mxCell id="arrow-out-decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#F57C00;strokeWidth=2;" edge="1" parent="1" source="outcomes" target="decision">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-decision-sig" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#F57C00;strokeWidth=2;" edge="1" parent="1" source="decision" target="significant">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-sig-promote" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#F57C00;strokeWidth=2;" edge="1" parent="1" source="significant" target="promote">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-sig-reject" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#F57C00;strokeWidth=2;" edge="1" parent="1" source="significant" target="reject">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-sig-continue" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#F57C00;strokeWidth=2;" edge="1" parent="1" source="significant" target="continue">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-sig-hitl" value="ESCALATE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#F57C00;strokeWidth=2;fontColor=#F57C00;fontSize=11;fontStyle=1;" edge="1" parent="1" source="significant" target="hitl">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-hitl-labels" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#F57C00;strokeWidth=2;" edge="1" parent="1" source="hitl" target="labels">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================ BAND 3 BOXES ============================ -->
+        <mxCell id="judge" value="LLM judge&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;separate model, not a variant&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2.5;fontColor=#1B5E20;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="380" y="880" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="agreement" value="Agreement metrics&#10;&lt;font style=&quot;font-size:11px;color:#666666&quot;&gt;rate · Cohen&#39;s κ&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=1.5;fontColor=#1B5E20;fontSize=14;fontStyle=1;arcSize=10;" vertex="1" parent="1">
+          <mxGeometry x="660" y="880" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="curve-box" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#388E3C;strokeWidth=1.5;" vertex="1" parent="1">
+          <mxGeometry x="950" y="860" width="240" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="curve-line" value="" style="curved=0;endArrow=none;html=1;strokeColor=#388E3C;strokeWidth=2.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="980" y="970" as="sourcePoint" />
+            <mxPoint x="1000" y="960" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="curve-line2" value="" style="curved=0;endArrow=none;html=1;strokeColor=#388E3C;strokeWidth=2.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1000" y="960" as="sourcePoint" />
+            <mxPoint x="1030" y="935" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="curve-line3" value="" style="curved=0;endArrow=none;html=1;strokeColor=#388E3C;strokeWidth=2.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1030" y="935" as="sourcePoint" />
+            <mxPoint x="1080" y="905" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="curve-line4" value="" style="curved=0;endArrow=none;html=1;strokeColor=#388E3C;strokeWidth=2.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1080" y="905" as="sourcePoint" />
+            <mxPoint x="1160" y="895" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="curve-label-x" value="human labels" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="990" width="140" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="curve-label-y" value="agreement" style="text;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#666666;rotation=270;" vertex="1" parent="1">
+          <mxGeometry x="925" y="900" width="80" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="finding" value="The finding: N labels → X% agreement" style="text;html=1;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;fontColor=#1B5E20;" vertex="1" parent="1">
+          <mxGeometry x="900" y="1000" width="360" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- ============================ BAND 3 ARROWS ============================ -->
+        <mxCell id="arrow-judge-agreement" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#388E3C;strokeWidth=2;" edge="1" parent="1" source="judge" target="agreement">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-agreement-curve" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeColor=#388E3C;strokeWidth=2;" edge="1" parent="1" source="agreement" target="curve-box">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================ CROSS-BAND ARROWS ============================ -->
+        <mxCell id="arrow-labels-judge" value="calibrates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;dashed=1;strokeColor=#388E3C;strokeWidth=2.5;fontColor=#388E3C;fontSize=11;fontStyle=1;" edge="1" parent="1" source="labels" target="judge">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ============================ LEGEND ============================ -->
+        <mxCell id="legend" value="Blue: routing  ·  Amber: decision + HITL  ·  Green: calibration" style="text;html=1;align=right;verticalAlign=middle;fontSize=10;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="1040" width="760" height="25" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
